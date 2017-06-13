@@ -1,0 +1,13 @@
+[Unit]
+Description=Edison Doorbell Application Service
+After=syslog.target
+
+[Service]
+User=root
+PIDFile=/root/doorbell/doorbell.pid
+ExecStart=/root/doorbell/doorbell.jar
+SuccessExitStatus=143
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

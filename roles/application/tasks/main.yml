@@ -1,0 +1,50 @@
+---
+- name: Create application directory
+  file:
+    path: /root/doorbell/motion
+    state: directory
+    recurse: yes
+
+- name: Copy configuration files
+  copy:
+    src: "{{ item }}"
+    dest: /root/doorbell
+    mode: 0644
+    force: yes
+  with_items:
+    - motion.conf
+
+- name: Copy application files
+  copy:
+    src: "{{ item }}"
+    dest: /root/doorbell
+    mode: 0755
+    force: yes
+  with_items:
+    - encoder.sh
+    - motion.sh
+    - doorbell.jar
+
+- name: Copy service files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/systemd/system
+    mode: 0644
+    force: yes
+  with_items:
+    - doorbell-encoder.service
+    - doorbell-motion.service
+    - doorbell.service
+
+- name: Reload services
+  shell: systemctl daemon-reload
+
+- name: Enable and start services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - doorbell-encoder.service
+    - doorbell-motion.service
+    - doorbell.service

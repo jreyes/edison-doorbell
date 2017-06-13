@@ -1,0 +1,39 @@
+---
+- name: Update apt packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+
+- name: Install dependencies
+  apt: name={{ item }} state=present
+  with_items:
+    - v4l-utils
+    - ffmpeg
+    - motion
+
+- name: Is Streameye installed?
+  stat: path=/usr/local/bin/streameye
+  register: st
+
+- name: Clone Streameye
+  when: not st.stat.exists
+  git:
+    repo: https://github.com/ccrisan/streameye.git
+    dest: /root/streameye
+
+- name: Build Streameye
+  when: not st.stat.exists
+  make:
+    chdir: "/root/streameye"
+
+- name: Install Streameye
+  when: not st.stat.exists
+  make:
+    chdir: /root/streameye
+    target: install
+
+- name: Remove Streameye build directory
+  when: not st.stat.exists
+  file:
+    path: "/root/streameye"
+    state: absent

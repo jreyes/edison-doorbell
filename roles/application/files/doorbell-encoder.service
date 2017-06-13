@@ -1,0 +1,12 @@
+[Unit]
+Description=Edison Doorbell Motion Encoder Service
+
+[Service]
+User=root
+Group=root
+PIDFile=/root/doorbell/encoder.pid
+ExecStart=/root/doorbell/encoder.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,2 @@
+[edisons]
+root ansible_sudo_pass='edison'
